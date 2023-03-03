@@ -24,15 +24,38 @@ def show_expenses(month):
 
 
 def add_expense(month):
-    print()
-    expense_amount = float(input("Podaj kwotę [zł]: "))
-    expense_type = input("Podaj opis wydatku: ")
-    expense = (
-        expense_amount,
-        expense_type,
-        month,
+    try:
+        print()
+        expense_amount = float(input("Podaj kwotę [zł]: "))
+        expense_type = input("Podaj opis wydatku: ")
+        expense = (
+            expense_amount,
+            expense_type,
+            month,
+        )
+        expenses.append(expense)
+    except ValueError:
+        add_expense(month)
+
+
+def stats(month):
+    total_amount_month = sum(
+        expense_amount
+        for expense_amount, _, expense_month in expenses
+        if expense_month == month
     )
-    expenses.append(expense)
+    total_amount_all = sum(expense_amount for expense_amount, _, _, in expenses)
+    number_of_expenses_month = sum(
+        1 for _, _, expense_month in expenses if expense_month == month
+    )
+    average_expenses_month = total_amount_month / number_of_expenses_month
+    average_expenses_all = total_amount_all / len(expenses)
+    print()
+    print("Statystyki")
+    print("Wydatki w", month, ":", total_amount_month, "zł")
+    print("Wszystkie wydatki:", total_amount_all, "zł")
+    print("Średnia wydatków w", month, ":", average_expenses_month, "zł")
+    print("Średnia wszystkich wydatków: ", average_expenses_all, "zł")
 
 
 while True:
@@ -52,7 +75,8 @@ while True:
             print()
             print("1.Dodaj wydatek")
             print("2.Pokaż wydatki")
-            print("3.Powrót do wyboru miesiąca")
+            print("3.Statystki")
+            print("4.Powrót do wyboru miesiąca")
             choice = int(input("Wybierz opcję: "))
         except ValueError:
             print("WYBIERZ NUMER")
@@ -60,5 +84,7 @@ while True:
             add_expense(month)
         if choice == 2:
             show_expenses(month)
-        if choice == 3:
+        if choice == 4:
             break
+        if choice == 3:
+            stats(month)
